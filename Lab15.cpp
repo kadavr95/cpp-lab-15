@@ -276,45 +276,9 @@ int GroupComparison( const void *a, const void *b)
 int GradesComparison( const void *a, const void *b)
 {
    //return ( ((*(StudentData*)a)->Grades - (*(StudentData *)b)->Grades );
-   return ((StudentData*)a)->Grades - ((StudentData*)b)->Grades;
+   double Difference= ((StudentData*)a)->Grades - ((StudentData*)b)->Grades;
+   return ( Difference < 0.0 ) ? -1 : ( Difference > 0.0 ) ? 1 : 0;
 }
-
-/*
-void MatrixQuickSort(int FirstElement, int LastElement, VariableClassType** DataMatrix, int RowNumber)//matrix sort
-{
-	VariableClassType Pivot, TemporaryVariable; //defining variables
-	int FirstSubarrayElement,LastSubarrayElement,Counter;
-	FirstSubarrayElement=FirstElement;//assign data from external variables to internal counters
-	LastSubarrayElement=LastElement;
-	Pivot=DataMatrix[(FirstSubarrayElement+LastSubarrayElement)/2][0];//defining pivot element
-	while (FirstSubarrayElement<=LastSubarrayElement)//checking counters intersection
-	{
-		while (DataMatrix[FirstSubarrayElement][0]<Pivot)//while element is smaller than pivot
-		{
-			FirstSubarrayElement++;//left counter increment
-		}
-		while (DataMatrix[LastSubarrayElement][0]>Pivot)//while element is bigger than pivot
-		{
-			LastSubarrayElement--;//right counter decrement
-		}
-		if (FirstSubarrayElement<=LastSubarrayElement)//in case of left counter is less than right counter
-		{
-			for (Counter = 0; Counter < RowNumber; Counter++)//replacement of all elements in column through temporary variable
-			{
-				TemporaryVariable=DataMatrix[FirstSubarrayElement][Counter];
-				DataMatrix[FirstSubarrayElement][Counter]=DataMatrix[LastSubarrayElement][Counter];
-				DataMatrix[LastSubarrayElement][Counter]=TemporaryVariable;
-			}
-			FirstSubarrayElement++;//left counter increment
-			LastSubarrayElement--;//right counter decrement
-		}
-	}
-	if (FirstElement<LastSubarrayElement)//sorting of left part of matrix
-		MatrixQuickSort(FirstElement,LastSubarrayElement,DataMatrix, RowNumber);
-	if (FirstSubarrayElement<LastElement)//sorting of right part of matrix
-		MatrixQuickSort(FirstSubarrayElement,LastElement,DataMatrix, RowNumber);
-}
-*/
 
 
 
