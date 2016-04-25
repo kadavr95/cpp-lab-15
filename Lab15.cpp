@@ -22,7 +22,8 @@ void OutputFile(StudentData *DataArray, int StudentsCount, char FileName[50]);
 void DataSort(StudentData *DataArray, int StudentsCount);
 void OutputConsole(StudentData *DataArray, int StudentsCount);
 
-int CharComparison( const void *a, const void *b);
+int GroupComparison( const void *a, const void *b);
+int GradesComparison( const void *a, const void *b);
 
 string RussianOutput(char TextChar[]); //перевод кодировки Windows в Dos
 
@@ -193,13 +194,19 @@ void OutputConsole(StudentData *DataArray, int StudentsCount)
 
 void DataSort(StudentData *DataArray, int StudentsCount)
 {
-	//qsort(DataArray[0].LastName, StudentsCount,sizeof(DataArray[0]),CharComparison);
-	qsort(DataArray[0].Grades, StudentsCount,sizeof(DataArray[0]),FloatComparison);
+	//qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GroupComparison);
+	qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GradesComparison);
 }
 
-int CharComparison( const void *a, const void *b)
+int GroupComparison( const void *a, const void *b)
 {
-   return( strcmp((char *)a,(char *)b) );
+   return strcmp(((StudentData*)a)->Group, ((StudentData*)b)->Group);
+}
+
+int GradesComparison( const void *a, const void *b)
+{
+   //return ( ((*(StudentData*)a)->Grades - (*(StudentData *)b)->Grades );
+   return ((StudentData*)a)->Grades - ((StudentData*)b)->Grades;
 }
 
 /*
