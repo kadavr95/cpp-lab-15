@@ -15,13 +15,17 @@ struct StudentData
 };
 
 void OutputMainMenu();
+void OutputSortMenu();
 void AboutProgramme();
 void InputTextFile(StudentData *DataArray, int *StudentsCount, char FileName[50]);
 void InputBinaryFile(StudentData *DataArray, int *StudentsCount, char FileName[50]);
 void OutputFile(StudentData *DataArray, int StudentsCount, char FileName[50]);
 void DataSort(StudentData *DataArray, int StudentsCount);
 void OutputConsole(StudentData *DataArray, int StudentsCount);
-
+int CodeComparison( const void *a, const void *b);
+int LastNameComparison( const void *a, const void *b);
+int FirstNameComparison( const void *a, const void *b);
+int MiddleNameComparison( const void *a, const void *b);
 int GroupComparison( const void *a, const void *b);
 int GradesComparison( const void *a, const void *b);
 
@@ -100,6 +104,18 @@ void OutputMainMenu()//show menu of available commands
 	cout<<"Press 6 to save data to binary file\n";
 	cout<<"Press 9 to get info about the programme\n";
 	cout<<"Press 0 to exit";
+}
+
+void OutputSortMenu()
+{
+	cout<<"Choose value to sort:\n";
+	cout<<"Press 1 to sort by code\n";
+	cout<<"Press 2 to sort by last name\n";
+	cout<<"Press 3 to sort by first name\n";
+	cout<<"Press 4 to sort by middle name\n";
+	cout<<"Press 5 to sort by group\n";
+	cout<<"Press 6 to sort by grades\n";
+	cout<<"Press 0 to return to main menu";
 }
 
 void AboutProgramme()//show info about the programme
@@ -194,8 +210,62 @@ void OutputConsole(StudentData *DataArray, int StudentsCount)
 
 void DataSort(StudentData *DataArray, int StudentsCount)
 {
+	short OperationCode;//defining variables
+	OutputSortMenu();//show menu of available commands
+	while(OperationCode<48 || OperationCode>54)//endless repeat
+	{
+		OperationCode=getch();//get command
+		system("cls");//clear console screen
+		switch (OperationCode)//command choice
+		{
+			case 49:
+				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),CodeComparison);
+				break;
+			case 50:
+				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),LastNameComparison);
+				break;
+			case 51:
+				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),FirstNameComparison);
+				break;
+			case 52:
+				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),MiddleNameComparison);
+				break;
+			case 53:
+				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GroupComparison);
+				break;
+			case 54:
+				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GradesComparison);
+				break;
+			case 48:
+				OutputMainMenu();
+				exit;
+				break;
+			default://case of pressing button not assigned to commands
+				OutputSortMenu();//show menu of available commands
+		}
+	}
 	//qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GroupComparison);
-	qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GradesComparison);
+	//qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GradesComparison);
+}
+
+int CodeComparison( const void *a, const void *b)
+{
+   return strcmp(((StudentData*)a)->Code, ((StudentData*)b)->Code);
+}
+
+int LastNameComparison( const void *a, const void *b)
+{
+   return strcmp(((StudentData*)a)->LastName, ((StudentData*)b)->LastName);
+}
+
+int FirstNameComparison( const void *a, const void *b)
+{
+   return strcmp(((StudentData*)a)->FirstName, ((StudentData*)b)->FirstName);
+}
+
+int MiddleNameComparison( const void *a, const void *b)
+{
+   return strcmp(((StudentData*)a)->MiddleName, ((StudentData*)b)->MiddleName);
 }
 
 int GroupComparison( const void *a, const void *b)
