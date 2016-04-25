@@ -244,8 +244,6 @@ void DataSort(StudentData *DataArray, int StudentsCount)
 				OutputSortMenu();//show menu of available commands
 		}
 	}
-	//qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GroupComparison);
-	//qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GradesComparison);
 }
 
 int CodeComparison( const void *a, const void *b)
@@ -275,7 +273,6 @@ int GroupComparison( const void *a, const void *b)
 
 int GradesComparison( const void *a, const void *b)
 {
-   //return ( ((*(StudentData*)a)->Grades - (*(StudentData *)b)->Grades );
    double Difference= ((StudentData*)a)->Grades - ((StudentData*)b)->Grades;
    return ( Difference < 0.0 ) ? -1 : ( Difference > 0.0 ) ? 1 : 0;
 }
