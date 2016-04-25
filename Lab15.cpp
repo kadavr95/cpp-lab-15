@@ -16,11 +16,13 @@ struct StudentData
 
 void OutputMainMenu();
 void AboutProgramme();
-void InputFile(StudentData *DataArray, int *StudentsCount, char FileName[50], bool IsBinary);
 void InputTextFile(StudentData *DataArray, int *StudentsCount, char FileName[50]);
 void InputBinaryFile(StudentData *DataArray, int *StudentsCount, char FileName[50]);
-void OutputFile(StudentData *DataArray, int StudentsCount, char FileName[50], bool IsBinary);
+void OutputFile(StudentData *DataArray, int StudentsCount, char FileName[50]);
+void DataSort(StudentData *DataArray, int StudentsCount);
 void OutputConsole(StudentData *DataArray, int StudentsCount);
+
+int CharComparison( const void *a, const void *b);
 
 string RussianOutput(char TextChar[]); //перевод кодировки Windows в Dos
 
@@ -52,6 +54,7 @@ void main()//main function
 				InputBinaryFile(DataArray, &StudentsCount, FileName);
 				break;
 			case 51:
+				DataSort(DataArray, StudentsCount);
 
 				break;
 			case 52:
@@ -62,7 +65,7 @@ void main()//main function
 
 				break;
 			case 54:
-                cout<<"Enter filename\n";
+				cout<<"Enter filename\n";
 				cin>>FileName;
 				OutputFile(DataArray, StudentsCount, FileName);
 				break;
@@ -129,32 +132,27 @@ void InputTextFile(StudentData *DataArray, int *StudentsCount, char FileName[50]
 
 void InputBinaryFile(StudentData *DataArray, int *StudentsCount, char FileName[50])
 {
- 	ifstream FileStream;
-	/*
-	*StudentsCount=0;
-	FileStream.open(FileName, ios::binary);
-	while (FileStream.eof()!=1)
-	{
-		FileStream>>(DataArray)[*StudentsCount].Code;
-		FileStream>>(DataArray)[*StudentsCount].LastName;
-		FileStream>>(DataArray)[*StudentsCount].FirstName;
-		FileStream>>(DataArray)[*StudentsCount].MiddleName;
-		FileStream>>(DataArray)[*StudentsCount].Group;
-		FileStream>>(DataArray)[*StudentsCount].Grades;
-		(*StudentsCount)++;
-	}
-	(*StudentsCount)--;
-	FileStream.close();
-	*/
-
+	ifstream FileStream;
 	streampos Size;
 	char * MemoryBlock;
 
 	FileStream.open(FileName, ios::binary);
 	Size = FileStream.tellg();
 	MemoryBlock = new char [Size];
-	FileStream.seekg (0, ios::beg);
-	FileStream.read (MemoryBlock, Size);
+	*StudentsCount=0;
+	while (FileStream.eof()!=1)
+	{
+		FileStream.read((DataArray)[*StudentsCount].Code, sizeof(char[10]));
+		FileStream.read((DataArray)[*StudentsCount].LastName, sizeof(char[29]));
+		FileStream.read((DataArray)[*StudentsCount].FirstName, sizeof(char[29]));
+		FileStream.read((DataArray)[*StudentsCount].MiddleName, sizeof(char[29]));
+		FileStream.read((DataArray)[*StudentsCount].Group, sizeof(char[10]));
+
+		FileStream.read(MemoryBlock, sizeof(float));
+		(DataArray)[*StudentsCount].Grades=atof(MemoryBlock);
+		(*StudentsCount)++;
+	}
+	(*StudentsCount)--;
 	FileStream.close();
 	delete[] MemoryBlock;
 
@@ -164,18 +162,17 @@ void OutputFile(StudentData *DataArray, int StudentsCount, char FileName[50])
 {
 	ofstream FileStream;
 	int Counter;
-	if (IsBinary)
-		FileStream.open(FileName, ios::binary | ios::trunc);
-	else
-		FileStream.open(FileName);
+	char MemoryBlock[30];
+	FileStream.open(FileName, ios::binary | ios::trunc);
 	for (Counter = 0; Counter < StudentsCount; Counter++)
 	{
-		FileStream<<(DataArray)[Counter].Code<<" ";
-		FileStream<<(DataArray)[Counter].LastName<<" ";
-		FileStream<<(DataArray)[Counter].FirstName<<" ";
-		FileStream<<(DataArray)[Counter].MiddleName<<" ";
-		FileStream<<(DataArray)[Counter].Group<<" ";
-		FileStream<<(DataArray)[Counter].Grades<<"\n";
+		FileStream.write((DataArray)[Counter].Code,sizeof(char[10]));
+		FileStream.write((DataArray)[Counter].LastName,sizeof(char[29]));
+		FileStream.write((DataArray)[Counter].FirstName,sizeof(char[29]));
+		FileStream.write((DataArray)[Counter].MiddleName,sizeof(char[29]));
+		FileStream.write((DataArray)[Counter].Group,sizeof(char[10]));
+		snprintf(MemoryBlock, sizeof((DataArray)[Counter].Grades), "%f", (DataArray)[Counter].Grades);
+		FileStream.write(MemoryBlock,sizeof(float));
 	}
 	FileStream.close();
 }
@@ -193,6 +190,57 @@ void OutputConsole(StudentData *DataArray, int StudentsCount)
 		cout<<setw(6)<<(DataArray)[Counter].Grades<<"\n";    
 	}
 }
+
+void DataSort(StudentData *DataArray, int StudentsCount)
+{
+	//qsort(DataArray[0].LastName, StudentsCount,sizeof(DataArray[0]),CharComparison);
+	qsort(DataArray[0].Grades, StudentsCount,sizeof(DataArray[0]),FloatComparison);
+}
+
+int CharComparison( const void *a, const void *b)
+{
+   return( strcmp((char *)a,(char *)b) );
+}
+
+/*
+void MatrixQuickSort(int FirstElement, int LastElement, VariableClassType** DataMatrix, int RowNumber)//matrix sort
+{
+	VariableClassType Pivot, TemporaryVariable; //defining variables
+	int FirstSubarrayElement,LastSubarrayElement,Counter;
+	FirstSubarrayElement=FirstElement;//assign data from external variables to internal counters
+	LastSubarrayElement=LastElement;
+	Pivot=DataMatrix[(FirstSubarrayElement+LastSubarrayElement)/2][0];//defining pivot element
+	while (FirstSubarrayElement<=LastSubarrayElement)//checking counters intersection
+	{
+		while (DataMatrix[FirstSubarrayElement][0]<Pivot)//while element is smaller than pivot
+		{
+			FirstSubarrayElement++;//left counter increment
+		}
+		while (DataMatrix[LastSubarrayElement][0]>Pivot)//while element is bigger than pivot
+		{
+			LastSubarrayElement--;//right counter decrement
+		}
+		if (FirstSubarrayElement<=LastSubarrayElement)//in case of left counter is less than right counter
+		{
+			for (Counter = 0; Counter < RowNumber; Counter++)//replacement of all elements in column through temporary variable
+			{
+				TemporaryVariable=DataMatrix[FirstSubarrayElement][Counter];
+				DataMatrix[FirstSubarrayElement][Counter]=DataMatrix[LastSubarrayElement][Counter];
+				DataMatrix[LastSubarrayElement][Counter]=TemporaryVariable;
+			}
+			FirstSubarrayElement++;//left counter increment
+			LastSubarrayElement--;//right counter decrement
+		}
+	}
+	if (FirstElement<LastSubarrayElement)//sorting of left part of matrix
+		MatrixQuickSort(FirstElement,LastSubarrayElement,DataMatrix, RowNumber);
+	if (FirstSubarrayElement<LastElement)//sorting of right part of matrix
+		MatrixQuickSort(FirstSubarrayElement,LastElement,DataMatrix, RowNumber);
+}
+*/
+
+
+
 /*
 void output_file(char file_name[30])
 {
