@@ -33,7 +33,8 @@ int MiddleNameComparison( const void *a, const void *b);
 int GroupComparison( const void *a, const void *b);
 int GradesComparison( const void *a, const void *b);
 void BinarySearch(StudentData *DataArray, int StudentsCount);
-void BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchElement[29]);
+void SearchResult(StudentData *DataArray, char SearchElement[29], int Index);
+int BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchElement[29]);
 
 string RussianOutput(char TextChar[]); //перевод кодировки Windows в Dos
 
@@ -43,7 +44,7 @@ const MaxElements=50;
 
 void main()//main function
 {
-	char FileName[50], SearchElement[29];
+	char FileName[50];
 	int StudentsCount;
 	short OperationCode;//defining variables
 	StudentData *DataArray = new StudentData [MaxElements];
@@ -121,7 +122,7 @@ void OutputMainMenu()//show menu of available commands
 
 void OutputSortMenu()
 {
-	cout<<"SORT DATA\n"
+	cout<<"SORT DATA\n";
 	cout<<"Choose value to sort:\n";
 	cout<<"Press 1 to sort by code\n";
 	cout<<"Press 2 to sort by last name\n";
@@ -134,7 +135,7 @@ void OutputSortMenu()
 
 void OutputSearchMenu()
 {
-	cout<<"SEARCH DATA\n"
+	cout<<"SEARCH DATA\n";
 	cout<<"Choose value to search:\n";
 	cout<<"Press 1 to search by code\n";
 	cout<<"Press 2 to search by last name\n";
@@ -318,7 +319,9 @@ int GradesComparison( const void *a, const void *b)
 
 void BinarySearch(StudentData *DataArray, int StudentsCount)
 {
- 	short OperationCode;//defining variables
+	char SearchElement[29];
+	short OperationCode;//defining variables
+	int Index;
 	OutputSearchMenu();//show menu of available commands
 	while(OperationCode<48 || OperationCode>54)//endless repeat
 	{
@@ -337,7 +340,8 @@ void BinarySearch(StudentData *DataArray, int StudentsCount)
 				cout<<"SEARCH BY LAST NAME\n";
                 cout<<"Enter value to search\n";
 				cin>>SearchElement;
-
+				Index=BinarySearchLastName(DataArray, StudentsCount, SearchElement);
+				SearchResult(DataArray, SearchElement,Index);
 				cout<<"Done!";
 				break;
 			case 51:
@@ -377,7 +381,17 @@ void BinarySearch(StudentData *DataArray, int StudentsCount)
 		}
 	}
 }
-void BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchElement[29])
+
+void SearchResult(StudentData *DataArray, char SearchElement[29], int Index)
+{
+	if (strcmp(SearchElement, (DataArray[Index].LastName))==0)
+		cout<<"Value is found\n"<<"Index: "<<Index<<"\nCode: "<<DataArray[Index].Code<<"\nName: "<<DataArray[Index].LastName<<" "<<
+			DataArray[Index].FirstName<<" "<<DataArray[Index].MiddleName<<"\nGroup: "<<DataArray[Index].Group<<"\nGrades: "<<DataArray[Index].Grades<<"\n";
+	else
+		cout << "Value is not found!\n";
+}
+
+int BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchElement[29])
 {
 	int AverageIndex = 0, FirstIndex   = 0,LastIndex    = StudentsCount -1;
 	while (FirstIndex < LastIndex)
@@ -389,9 +403,6 @@ void BinarySearchLastName(StudentData *DataArray, int StudentsCount, char Search
 		else
 			FirstIndex = AverageIndex + 1;    // найден ключевой элемент или нет
 	}
-	if ( strcmp(SearchElement, (DataArray[LastIndex].LastName))==0)
-		cout << "\nvalue is found" << "\nindex = " << LastIndex << endl;
-	else
-		cout << "\nValue is not found!" << endl;
+	return LastIndex;
 }
 
