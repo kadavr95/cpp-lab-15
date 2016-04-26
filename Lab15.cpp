@@ -4,6 +4,9 @@
 #include <string>
 #include <iomanip>
 
+#include <clocale>    // может быть не об€зательным - зависит от компил€тора
+#include <windows.h>
+
 struct StudentData
 {
    char Code[10];
@@ -16,6 +19,7 @@ struct StudentData
 
 void OutputMainMenu();
 void OutputSortMenu();
+void OutputSearchMenu();
 void AboutProgramme();
 void InputTextFile(StudentData *DataArray, int *StudentsCount, char FileName[50]);
 void InputBinaryFile(StudentData *DataArray, int *StudentsCount, char FileName[50]);
@@ -28,6 +32,8 @@ int FirstNameComparison( const void *a, const void *b);
 int MiddleNameComparison( const void *a, const void *b);
 int GroupComparison( const void *a, const void *b);
 int GradesComparison( const void *a, const void *b);
+void BinarySearch(StudentData *DataArray, int StudentsCount);
+void BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchElement[29]);
 
 string RussianOutput(char TextChar[]); //перевод кодировки Windows в Dos
 
@@ -37,10 +43,12 @@ const MaxElements=50;
 
 void main()//main function
 {
-	char FileName[50];
+	char FileName[50], SearchElement[29];
 	int StudentsCount;
 	short OperationCode;//defining variables
 	StudentData *DataArray = new StudentData [MaxElements];
+	SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
 	OutputMainMenu();//show menu of available commands
 	while(OperationCode!=48)//endless repeat
 	{
@@ -49,36 +57,41 @@ void main()//main function
 		switch (OperationCode)//command choice
 		{
 			case 49:
+				cout<<"OPEN TEXT FILE\n";
 				cout<<"Enter filename\n";
 				cin>>FileName;
 				InputTextFile(DataArray, &StudentsCount, FileName);
+				cout<<"Done!\n";
 				break;
 			case 50:
+				cout<<"OPEN BINARY FILE\n";
                 cout<<"Enter filename\n";
 				cin>>FileName;
 				InputBinaryFile(DataArray, &StudentsCount, FileName);
+				cout<<"Done!\n";
 				break;
 			case 51:
 				DataSort(DataArray, StudentsCount);
-
 				break;
 			case 52:
 				cout<<"   Code   |         Last Name           |          First Name         |         Middle Name         |  Group   |Grades\n";
 				OutputConsole(DataArray, StudentsCount);
 				break;
 			case 53:
-
+				BinarySearch(DataArray, StudentsCount);
+				/*
+				cout<<"SEARCH DATA\n";
+				cout<<"Enter value to search\n";
+				cin>>SearchElement;
+				BinarySearchLastName(DataArray, StudentsCount, SearchElement);
+				*/
 				break;
 			case 54:
+				cout<<"SAVE BINARY FILE\n";
 				cout<<"Enter filename\n";
 				cin>>FileName;
 				OutputFile(DataArray, StudentsCount, FileName);
-				break;
-			case 55:
-
-				break;
-			case 56:
-
+				cout<<"Done!\n";
 				break;
 			case 57:
 				AboutProgramme();
@@ -108,6 +121,7 @@ void OutputMainMenu()//show menu of available commands
 
 void OutputSortMenu()
 {
+	cout<<"SORT DATA\n"
 	cout<<"Choose value to sort:\n";
 	cout<<"Press 1 to sort by code\n";
 	cout<<"Press 2 to sort by last name\n";
@@ -115,6 +129,19 @@ void OutputSortMenu()
 	cout<<"Press 4 to sort by middle name\n";
 	cout<<"Press 5 to sort by group\n";
 	cout<<"Press 6 to sort by grades\n";
+	cout<<"Press 0 to return to main menu";
+}
+
+void OutputSearchMenu()
+{
+	cout<<"SEARCH DATA\n"
+	cout<<"Choose value to search:\n";
+	cout<<"Press 1 to search by code\n";
+	cout<<"Press 2 to search by last name\n";
+	cout<<"Press 3 to search by first name\n";
+	cout<<"Press 4 to search by middle name\n";
+	cout<<"Press 5 to search by group\n";
+	cout<<"Press 6 to search by grades\n";
 	cout<<"Press 0 to return to main menu";
 }
 
@@ -199,12 +226,12 @@ void OutputConsole(StudentData *DataArray, int StudentsCount)
 	int Counter;
 	for (Counter = 0; Counter < StudentsCount; Counter++) 
 	{
-		cout<<setw(10)<<left<<RussianOutput((DataArray)[Counter].Code)<<"|";
-		cout<<setw(29)<<RussianOutput((DataArray)[Counter].LastName)<<"|";
-		cout<<setw(29)<<RussianOutput((DataArray)[Counter].FirstName)<<"|";
-		cout<<setw(29)<<RussianOutput((DataArray)[Counter].MiddleName)<<"|";
-		cout<<setw(10)<<RussianOutput((DataArray)[Counter].Group)<<"|";
-		cout<<setw(6)<<(DataArray)[Counter].Grades<<"\n";    
+		cout<<setw(10)<<left<<(DataArray)[Counter].Code<<"|";
+		cout<<setw(29)<<(DataArray)[Counter].LastName<<"|";
+		cout<<setw(29)<<(DataArray)[Counter].FirstName<<"|";
+		cout<<setw(29)<<(DataArray)[Counter].MiddleName<<"|";
+		cout<<setw(10)<<(DataArray)[Counter].Group<<"|";
+		cout<<setw(6)<<(DataArray)[Counter].Grades<<"\n";
 	}
 }
 
@@ -219,22 +246,34 @@ void DataSort(StudentData *DataArray, int StudentsCount)
 		switch (OperationCode)//command choice
 		{
 			case 49:
+				cout<<"SORT BY CODE\n";
 				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),CodeComparison);
+				cout<<"Done!";
 				break;
 			case 50:
+				cout<<"SORT BY LAST NAME\n";
 				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),LastNameComparison);
+				cout<<"Done!";
 				break;
 			case 51:
+				cout<<"SORT BY FIRST NAME\n";
 				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),FirstNameComparison);
+				cout<<"Done!";
 				break;
 			case 52:
+				cout<<"SORT BY MIDDLE NAME\n";
 				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),MiddleNameComparison);
+				cout<<"Done!";
 				break;
 			case 53:
+				cout<<"SORT BY GROUP\n";
 				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GroupComparison);
+				cout<<"Done!";
 				break;
 			case 54:
+				cout<<"SORT BY GRADES\n";
 				qsort(DataArray, StudentsCount,sizeof(DataArray[0]),GradesComparison);
+				cout<<"Done!";
 				break;
 			case 48:
 				OutputMainMenu();
@@ -277,54 +316,82 @@ int GradesComparison( const void *a, const void *b)
    return ( Difference < 0.0 ) ? -1 : ( Difference > 0.0 ) ? 1 : 0;
 }
 
-
-
-/*
-void output_file(char file_name[30])
+void BinarySearch(StudentData *DataArray, int StudentsCount)
 {
-	worker r; //работник
-	ofstream f; //файлова€ переменна€
-	f.open(name); //открытие текстового файла
-	// «апись в файл данных о 3 работниках
-	for(int i=1;i<=3;i++)
+ 	short OperationCode;//defining variables
+	OutputSearchMenu();//show menu of available commands
+	while(OperationCode<48 || OperationCode>54)//endless repeat
 	{
-	   cout<<"number? ";
-	   cin>>r.nom;
-	   cout<<Фfam? У;
-	   cin>>r.fam;
-	   cout<<Фname? У;
-	   cin>>r.name;
-	   cout<<Фsalary? У;
-	   cin>>r.salary;
-	   f<<r.number<<" "<<r.fam<<" "<<r.name<<" "<<r.salary<<endl;
+		OperationCode=getch();//get command
+		system("cls");//clear console screen
+		switch (OperationCode)//command choice
+		{
+			case 49:
+				cout<<"SEARCH BY CODE\n";
+                cout<<"Enter value to search\n";
+				cin>>SearchElement;
+
+				cout<<"Done!";
+				break;
+			case 50:
+				cout<<"SEARCH BY LAST NAME\n";
+                cout<<"Enter value to search\n";
+				cin>>SearchElement;
+
+				cout<<"Done!";
+				break;
+			case 51:
+				cout<<"SEARCH BY FIRST NAME\n";
+                cout<<"Enter value to search\n";
+				cin>>SearchElement;
+
+				cout<<"Done!";
+				break;
+			case 52:
+				cout<<"SEARCH BY MIDDLE NAME\n";
+                cout<<"Enter value to search\n";
+				cin>>SearchElement;
+
+				cout<<"Done!";
+				break;
+			case 53:
+				cout<<"SEARCH BY GROUP\n";
+                cout<<"Enter value to search\n";
+				cin>>SearchElement;
+
+				cout<<"Done!";
+				break;
+			case 54:
+				cout<<"SEARCH BY GRADES\n";
+                cout<<"Enter value to search\n";
+				cin>>SearchElement;
+
+				cout<<"Done!";
+				break;
+			case 48:
+				OutputMainMenu();
+				exit;
+				break;
+			default://case of pressing button not assigned to commands
+				OutputSortMenu();//show menu of available commands
+		}
 	}
-	f.close( ); //закрытие файла
 }
-*/
-
-/*
-void main( )
+void BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchElement[29])
 {
-	char file_name[30]; //им€ файла
-	cout<<"file_name_file? ";
-	cin>>file_name;
-	output_file(file_name);
-}
-*/
-
-string RussianOutput(char TextChar[])
-{
-	string TextString;
-	TextString=TextChar;
-	int Counter=0;
-	while (TextChar[Counter]!=0)
+	int AverageIndex = 0, FirstIndex   = 0,LastIndex    = StudentsCount -1;
+	while (FirstIndex < LastIndex)
 	{
-	   if(TextChar[Counter]>='ј'&& TextChar[Counter]<='п' ) TextString[Counter]-=64;
-	   if(TextChar[Counter]>='р'&& TextChar[Counter]<='€' ) TextString[Counter]-=16;
-	   if(TextChar[Counter]=='®' ) TextString[Counter]=240;
-	   if(TextChar[Counter]=='Є' ) TextString[Counter]=241;
-		  Counter++;
+		AverageIndex = FirstIndex + (LastIndex - FirstIndex) / 2; // мен€ем индекс среднего значени€
+
+		if (strcmp(SearchElement, (DataArray[AverageIndex].LastName))<=0)
+			LastIndex = AverageIndex;
+		else
+			FirstIndex = AverageIndex + 1;    // найден ключевой элемент или нет
 	}
-	return TextString;
+	if ( strcmp(SearchElement, (DataArray[LastIndex].LastName))==0)
+		cout << "\nvalue is found" << "\nindex = " << LastIndex << endl;
+	else
+		cout << "\nValue is not found!" << endl;
 }
 
