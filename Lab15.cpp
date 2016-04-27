@@ -33,8 +33,18 @@ int MiddleNameComparison( const void *a, const void *b);
 int GroupComparison( const void *a, const void *b);
 int GradesComparison( const void *a, const void *b);
 void BinarySearch(StudentData *DataArray, int StudentsCount);
-void SearchResult(StudentData *DataArray, char SearchElement[29], int Index);
+void SearchResultCode(StudentData *DataArray, char SearchElement[29], int Index);
+void SearchResultLastName(StudentData *DataArray, char SearchElement[29], int Index);
+void SearchResultFirstName(StudentData *DataArray, char SearchElement[29], int Index);
+void SearchResultMiddleName(StudentData *DataArray, char SearchElement[29], int Index);
+void SearchResultGroup(StudentData *DataArray, char SearchElement[29], int Index);
+void SearchResultGrades(StudentData *DataArray, float SearchElement, int Index);
+int BinarySearchCode(StudentData *DataArray, int StudentsCount, char SearchElement[29]);
 int BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchElement[29]);
+int BinarySearchFirstName(StudentData *DataArray, int StudentsCount, char SearchElement[29]);
+int BinarySearchMiddleName(StudentData *DataArray, int StudentsCount, char SearchElement[29]);
+int BinarySearchGroup(StudentData *DataArray, int StudentsCount, char SearchElement[29]);
+int BinarySearchGrades(StudentData *DataArray, int StudentsCount, float SearchElement);
 
 string RussianOutput(char TextChar[]); //перевод кодировки Windows в Dos
 
@@ -46,7 +56,7 @@ void main()//main function
 {
 	char FileName[50];
 	int StudentsCount;
-	short OperationCode;//defining variables
+	short OperationCode=0;//defining variables
 	StudentData *DataArray = new StudentData [MaxElements];
 	SetConsoleOutputCP(1251);
 	SetConsoleCP(1251);
@@ -238,7 +248,7 @@ void OutputConsole(StudentData *DataArray, int StudentsCount)
 
 void DataSort(StudentData *DataArray, int StudentsCount)
 {
-	short OperationCode;//defining variables
+	short OperationCode=0;//defining variables
 	OutputSortMenu();//show menu of available commands
 	while(OperationCode<48 || OperationCode>54)//endless repeat
 	{
@@ -320,7 +330,8 @@ int GradesComparison( const void *a, const void *b)
 void BinarySearch(StudentData *DataArray, int StudentsCount)
 {
 	char SearchElement[29];
-	short OperationCode;//defining variables
+	float SearchElementFloat;
+	short OperationCode=0;//defining variables
 	int Index;
 	OutputSearchMenu();//show menu of available commands
 	while(OperationCode<48 || OperationCode>54)//endless repeat
@@ -333,7 +344,8 @@ void BinarySearch(StudentData *DataArray, int StudentsCount)
 				cout<<"SEARCH BY CODE\n";
                 cout<<"Enter value to search\n";
 				cin>>SearchElement;
-
+				Index=BinarySearchCode(DataArray, StudentsCount, SearchElement);
+				SearchResultCode(DataArray, SearchElement,Index);
 				cout<<"Done!";
 				break;
 			case 50:
@@ -341,35 +353,39 @@ void BinarySearch(StudentData *DataArray, int StudentsCount)
                 cout<<"Enter value to search\n";
 				cin>>SearchElement;
 				Index=BinarySearchLastName(DataArray, StudentsCount, SearchElement);
-				SearchResult(DataArray, SearchElement,Index);
+				SearchResultLastName(DataArray, SearchElement,Index);
 				cout<<"Done!";
 				break;
 			case 51:
 				cout<<"SEARCH BY FIRST NAME\n";
                 cout<<"Enter value to search\n";
 				cin>>SearchElement;
-
+				Index=BinarySearchFirstName(DataArray, StudentsCount, SearchElement);
+				SearchResultFirstName(DataArray, SearchElement,Index);
 				cout<<"Done!";
 				break;
 			case 52:
 				cout<<"SEARCH BY MIDDLE NAME\n";
                 cout<<"Enter value to search\n";
 				cin>>SearchElement;
-
+				Index=BinarySearchMiddleName(DataArray, StudentsCount, SearchElement);
+				SearchResultMiddleName(DataArray, SearchElement,Index);
 				cout<<"Done!";
 				break;
 			case 53:
 				cout<<"SEARCH BY GROUP\n";
-                cout<<"Enter value to search\n";
+				cout<<"Enter value to search\n";
 				cin>>SearchElement;
-
+				Index=BinarySearchGroup(DataArray, StudentsCount, SearchElement);
+				SearchResultGroup(DataArray, SearchElement,Index);
 				cout<<"Done!";
 				break;
 			case 54:
 				cout<<"SEARCH BY GRADES\n";
                 cout<<"Enter value to search\n";
-				cin>>SearchElement;
-
+				cin>>SearchElementFloat;
+				Index=BinarySearchGrades(DataArray, StudentsCount, SearchElementFloat);
+				SearchResultGrades(DataArray, SearchElementFloat,Index);
 				cout<<"Done!";
 				break;
 			case 48:
@@ -382,13 +398,73 @@ void BinarySearch(StudentData *DataArray, int StudentsCount)
 	}
 }
 
-void SearchResult(StudentData *DataArray, char SearchElement[29], int Index)
+void SearchResultCode(StudentData *DataArray, char SearchElement[29], int Index)
+{
+	if (strcmp(SearchElement, (DataArray[Index].Code))==0)
+		cout<<"Value is found\n"<<"Index: "<<Index<<"\nCode: "<<DataArray[Index].Code<<"\nName: "<<DataArray[Index].LastName<<" "<<
+			DataArray[Index].FirstName<<" "<<DataArray[Index].MiddleName<<"\nGroup: "<<DataArray[Index].Group<<"\nGrades: "<<DataArray[Index].Grades<<"\n";
+	else
+		cout << "Value is not found!\n";
+}
+
+void SearchResultLastName(StudentData *DataArray, char SearchElement[29], int Index)
 {
 	if (strcmp(SearchElement, (DataArray[Index].LastName))==0)
 		cout<<"Value is found\n"<<"Index: "<<Index<<"\nCode: "<<DataArray[Index].Code<<"\nName: "<<DataArray[Index].LastName<<" "<<
 			DataArray[Index].FirstName<<" "<<DataArray[Index].MiddleName<<"\nGroup: "<<DataArray[Index].Group<<"\nGrades: "<<DataArray[Index].Grades<<"\n";
 	else
 		cout << "Value is not found!\n";
+}
+
+void SearchResultFirstName(StudentData *DataArray, char SearchElement[29], int Index)
+{
+	if (strcmp(SearchElement, (DataArray[Index].FirstName))==0)
+		cout<<"Value is found\n"<<"Index: "<<Index<<"\nCode: "<<DataArray[Index].Code<<"\nName: "<<DataArray[Index].LastName<<" "<<
+			DataArray[Index].FirstName<<" "<<DataArray[Index].MiddleName<<"\nGroup: "<<DataArray[Index].Group<<"\nGrades: "<<DataArray[Index].Grades<<"\n";
+	else
+		cout << "Value is not found!\n";
+}
+
+void SearchResultMiddleName(StudentData *DataArray, char SearchElement[29], int Index)
+{
+	if (strcmp(SearchElement, (DataArray[Index].MiddleName))==0)
+		cout<<"Value is found\n"<<"Index: "<<Index<<"\nCode: "<<DataArray[Index].Code<<"\nName: "<<DataArray[Index].LastName<<" "<<
+			DataArray[Index].FirstName<<" "<<DataArray[Index].MiddleName<<"\nGroup: "<<DataArray[Index].Group<<"\nGrades: "<<DataArray[Index].Grades<<"\n";
+	else
+		cout << "Value is not found!\n";
+}
+
+void SearchResultGroup(StudentData *DataArray, char SearchElement[29], int Index)
+{
+	if (strcmp(SearchElement, (DataArray[Index].Group))==0)
+		cout<<"Value is found\n"<<"Index: "<<Index<<"\nCode: "<<DataArray[Index].Code<<"\nName: "<<DataArray[Index].LastName<<" "<<
+			DataArray[Index].FirstName<<" "<<DataArray[Index].MiddleName<<"\nGroup: "<<DataArray[Index].Group<<"\nGrades: "<<DataArray[Index].Grades<<"\n";
+	else
+		cout << "Value is not found!\n";
+}
+
+void SearchResultGrades(StudentData *DataArray, float SearchElement, int Index)
+{
+	if ((SearchElement)==(DataArray[Index].Grades))
+		cout<<"Value is found\n"<<"Index: "<<Index<<"\nCode: "<<DataArray[Index].Code<<"\nName: "<<DataArray[Index].LastName<<" "<<
+			DataArray[Index].FirstName<<" "<<DataArray[Index].MiddleName<<"\nGroup: "<<DataArray[Index].Group<<"\nGrades: "<<DataArray[Index].Grades<<"\n";
+	else
+		cout << "Value is not found!\n";
+}
+
+int BinarySearchCode(StudentData *DataArray, int StudentsCount, char SearchElement[29])
+{
+	int AverageIndex = 0, FirstIndex   = 0,LastIndex    = StudentsCount -1;
+	while (FirstIndex < LastIndex)
+	{
+		AverageIndex = FirstIndex + (LastIndex - FirstIndex) / 2; // меняем индекс среднего значения
+
+		if (strcmp(SearchElement, (DataArray[AverageIndex].Code))<=0)
+			LastIndex = AverageIndex;
+		else
+			FirstIndex = AverageIndex + 1;    // найден ключевой элемент или нет
+	}
+	return LastIndex;
 }
 
 int BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchElement[29])
@@ -399,6 +475,66 @@ int BinarySearchLastName(StudentData *DataArray, int StudentsCount, char SearchE
 		AverageIndex = FirstIndex + (LastIndex - FirstIndex) / 2; // меняем индекс среднего значения
 
 		if (strcmp(SearchElement, (DataArray[AverageIndex].LastName))<=0)
+			LastIndex = AverageIndex;
+		else
+			FirstIndex = AverageIndex + 1;    // найден ключевой элемент или нет
+	}
+	return LastIndex;
+}
+
+int BinarySearchFirstName(StudentData *DataArray, int StudentsCount, char SearchElement[29])
+{
+	int AverageIndex = 0, FirstIndex   = 0,LastIndex    = StudentsCount -1;
+	while (FirstIndex < LastIndex)
+	{
+		AverageIndex = FirstIndex + (LastIndex - FirstIndex) / 2; // меняем индекс среднего значения
+
+		if (strcmp(SearchElement, (DataArray[AverageIndex].FirstName))<=0)
+			LastIndex = AverageIndex;
+		else
+			FirstIndex = AverageIndex + 1;    // найден ключевой элемент или нет
+	}
+	return LastIndex;
+}
+
+int BinarySearchMiddleName(StudentData *DataArray, int StudentsCount, char SearchElement[29])
+{
+	int AverageIndex = 0, FirstIndex   = 0,LastIndex    = StudentsCount -1;
+	while (FirstIndex < LastIndex)
+	{
+		AverageIndex = FirstIndex + (LastIndex - FirstIndex) / 2; // меняем индекс среднего значения
+
+		if (strcmp(SearchElement, (DataArray[AverageIndex].MiddleName))<=0)
+			LastIndex = AverageIndex;
+		else
+			FirstIndex = AverageIndex + 1;    // найден ключевой элемент или нет
+	}
+	return LastIndex;
+}
+
+int BinarySearchGroup(StudentData *DataArray, int StudentsCount, char SearchElement[29])
+{
+	int AverageIndex = 0, FirstIndex   = 0,LastIndex    = StudentsCount -1;
+	while (FirstIndex < LastIndex)
+	{
+		AverageIndex = FirstIndex + (LastIndex - FirstIndex) / 2; // меняем индекс среднего значения
+
+		if (strcmp(SearchElement, (DataArray[AverageIndex].Group))<=0)
+			LastIndex = AverageIndex;
+		else
+			FirstIndex = AverageIndex + 1;    // найден ключевой элемент или нет
+	}
+	return LastIndex;
+}
+
+int BinarySearchGrades(StudentData *DataArray, int StudentsCount, float SearchElement)
+{
+	int AverageIndex = 0, FirstIndex   = 0,LastIndex    = StudentsCount -1;
+	while (FirstIndex < LastIndex)
+	{
+		AverageIndex = FirstIndex + (LastIndex - FirstIndex) / 2; // меняем индекс среднего значения
+
+		if ((SearchElement)<=(DataArray[AverageIndex].Grades))
 			LastIndex = AverageIndex;
 		else
 			FirstIndex = AverageIndex + 1;    // найден ключевой элемент или нет
