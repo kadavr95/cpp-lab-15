@@ -536,3 +536,4 @@ int BinarySearchGrades(StudentData *DataArray, int StudentsCount, float SearchEl
 	return LastIndex;
 }
 
+/*----------------------------------------------------------------------------*/
